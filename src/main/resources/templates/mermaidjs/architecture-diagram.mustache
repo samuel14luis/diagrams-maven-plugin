@@ -1,14 +1,10 @@
 architecture-beta
-		group api(cloud)[{{artifactId}}]
-{{#services}}
-			service {{.}} (server)[{{.}}] in api
-{{/services}}
-{{#redisClients}}
-			service {{.}} (database)[{{.}}] in api
-{{/redisClients}}
-{{#restClients}}
-			service {{.}} (server)[{{.}}] in api
-{{/restClients}}
+	group api(cloud)[{{artifactId}}]
+
+{{#components}}
+	service {{id}}(server)[{{label}}] in api
+{{/components}}
+
 {{#relationships}}
-			{{source}}:{{direction}} -- {{target}}
+	{{source}}{{connection}}{{target}}
 {{/relationships}}
