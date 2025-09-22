@@ -6,6 +6,12 @@ public class DogManagementApiImpl implements DogManagementApi {
     @RestClient
     private ManagePetsProxy petsProxy;
 
+    @RestClient
+    private ManageFishProxy fishProxy;
+
+    @RestClient
+    private ManageBirdProxy birdProxy;
+
     @Inject
     private PetToDogMapper mapper;
 
@@ -18,6 +24,20 @@ public class DogManagementApiImpl implements DogManagementApi {
                     return mapper.toDog(petDog);
                 })
                 .onFailure().invoke(ex -> log.error("Failed to fetch or map dog with id: {}", id, ex));
+    }
+
+    @Override
+    public Uni<Fish> getFish(String id) {
+        log.info("Fetching fish with id: {}", id);
+        return fishProxy.getFish(id)
+                .onFailure().invoke(ex -> log.error("Failed to fetch or map fish with id: {}", id, ex));
+    }
+
+    @Override
+    public Uni<Bird> getBird(String id) {
+        log.info("Fetching bird with id: {}", id);
+        return birdProxy.getBird(id)
+                .onFailure().invoke(ex -> log.error("Failed to fetch or map bird with id: {}", id, ex));
     }
 
 }

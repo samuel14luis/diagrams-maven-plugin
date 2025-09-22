@@ -13,13 +13,10 @@ import com.humtherland.maven.plugins.parser.Parser;
 import com.humtherland.maven.plugins.parser.PomParser;
 import com.humtherland.maven.plugins.utils.FileUtils;
 import org.xml.sax.SAXException;
-
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ArchitectureDiagramParser implements Parser {
 
@@ -32,9 +29,9 @@ public class ArchitectureDiagramParser implements Parser {
         Set<String> restClients = new HashSet<>();
         Set<String> injectedClients = new HashSet<>();
         Set<String> redisClients = new HashSet<>();
+        Map<String, Set<String>> dependencies = new HashMap<>();
 
         List<Path> javaFiles = FileUtils.listJavaFiles(inputDto.getSourceDir());
-
         JavaParser parser = new JavaParser();
 
         for (Path path:javaFiles) {
@@ -64,8 +61,9 @@ public class ArchitectureDiagramParser implements Parser {
                             String fieldType = field.getElementType().asString();
 
                             for(AnnotationExpr annotation: field.getAnnotations()) {
-                                if (annotation.getNameAsString().equals("InjectRestClient")) {
-                                    injectedClients.add(fieldType);
+                                if (annotation.getNameAsString().equals("RestClient")) {
+                                    //injectedClients.add(fieldType);
+                                    dependencies.computeIfAbsent(className, k -> new HashSet<>()).add(fieldType);
                                 } else if (annotation.getNameAsString().equals("RedisClient")) {
                                     redisClients.add(fieldType);
                                 }
@@ -80,6 +78,9 @@ public class ArchitectureDiagramParser implements Parser {
             }
         }
 
+        services.removeAll(restClients);
+        services.removeAll(redisClients);
+
         return ParsedDto.builder()
                 .artifactId(artifactId)
                 .services(services)
@@ -87,6 +88,7 @@ public class ArchitectureDiagramParser implements Parser {
                 .injectedClients(injectedClients)
                 .redisClients(redisClients)
                 .logger(inputDto.getLogger())
+                .dependencies(dependencies)
                 .build();
     }
 }

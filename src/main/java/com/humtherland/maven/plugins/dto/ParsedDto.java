@@ -1,5 +1,6 @@
 package com.humtherland.maven.plugins.dto;
 
+import java.util.Map;
 import java.util.Set;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,7 @@ public class ParsedDto {
     private Set<String> restClients;
     private Set<String> injectedClients;
     private Set<String> redisClients;
+    private Map<String, Set<String>> dependencies;
     private Log logger;
 
 }

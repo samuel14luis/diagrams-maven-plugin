@@ -1,10 +1,17 @@
 architecture-beta
-    group api(cloud)[BUSINESS DEMO PROJECT V1_0_0]
+		group api(cloud)[BUSINESS DEMO PROJECT V1_0_0]
 
-    service pettodogmapper(server)[PetToDogMapper] in api
-    service dogmanagementapiimpl(server)[DogManagementApiImpl] in api
-    service managepetsproxy(server)[ManagePetsProxy] in api
+			service foodmanagementapiimpl(server)[FoodManagementApiImpl] in api
+			service dogmanagementapiimpl(server)[DogManagementApiImpl] in api
+			service petdogmapper(server)[PetDogMapper] in api
+			service managevegetarianfoodproxy(server)[ManageVegetarianFoodProxy] in api
+			service managefishproxy(server)[ManageFishProxy] in api
+			service managebirdproxy(server)[ManageBirdProxy] in api
+			service managepetsproxy(server)[ManagePetsProxy] in api
+			service managetraditionalfoodproxy(server)[ManageTraditionalFoodProxy] in api
 
-    managepetsproxy:R -- L:pettodogmapper
-    managepetsproxy:T -- B:dogmanagementapiimpl
-    managepetsproxy:L -- R:managepetsproxy
+	foodmanagementapiimpl:R -- L:managevegetarianfoodproxy
+	foodmanagementapiimpl:T -- B:managetraditionalfoodproxy
+	dogmanagementapiimpl:R -- L:managefishproxy
+	dogmanagementapiimpl:T -- B:managebirdproxy
+	dogmanagementapiimpl:B -- T:managepetsproxy
