@@ -1,0 +1,10 @@
+architecture-beta
+    group api(cloud)[BUSINESS DEMO PROJECT V1_0_0]
+
+    service pettodogmapper(server)[PetToDogMapper] in api
+    service dogmanagementapiimpl(server)[DogManagementApiImpl] in api
+    service managepetsproxy(server)[ManagePetsProxy] in api
+
+    managepetsproxy:R -- L:pettodogmapper
+    managepetsproxy:T -- B:dogmanagementapiimpl
+    managepetsproxy:L -- R:managepetsproxy
