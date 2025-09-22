@@ -39,6 +39,9 @@ public class GenerateDiagramMojo extends AbstractMojo {
     @Parameter( defaultValue = "mermaid-js", property = "format", required = true )
     private String format;
 
+    @Parameter( defaultValue = "quarkus", property = "library", required = true )
+    private String library;
+
     private final FormatterFactory formatterFactory = new FormatterFactory();
     private final ParserFactory parserFactory = new ParserFactory();
 
@@ -46,7 +49,7 @@ public class GenerateDiagramMojo extends AbstractMojo {
         getLog().info("Starting diagram generation...");
 
         try {
-            ParsedDto parsedDto = parserFactory.getParser(diagramType)
+            ParsedDto parsedDto = parserFactory.getParser(library)
                     .parse(InputDto.builder()
                             .sourceDir(sourceDir)
                             .pomFile(pomFile)

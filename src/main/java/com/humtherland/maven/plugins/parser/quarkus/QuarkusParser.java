@@ -1,4 +1,4 @@
-package com.humtherland.maven.plugins.parser.architecturediagram;
+package com.humtherland.maven.plugins.parser.quarkus;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
@@ -18,13 +18,21 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 
-public class ArchitectureDiagramParser implements Parser {
+public class QuarkusParser implements Parser {
 
     private final PomParser pomParser = new PomParser();
 
     public ParsedDto parse(InputDto inputDto)
             throws XPathExpressionException, IOException, SAXException {
         String artifactId = pomParser.getFormattedProjectId(inputDto.getPomFile());
+        ParsedDto dto = generateServicesData(inputDto);
+        dto.setArtifactId(artifactId);
+        dto.setLogger(inputDto.getLogger());
+
+        return dto;
+    }
+
+    private ParsedDto generateServicesData(InputDto inputDto) throws IOException {
         Set<String> services = new HashSet<>();
         Set<String> restClients = new HashSet<>();
         Set<String> injectedClients = new HashSet<>();
@@ -62,7 +70,6 @@ public class ArchitectureDiagramParser implements Parser {
 
                             for(AnnotationExpr annotation: field.getAnnotations()) {
                                 if (annotation.getNameAsString().equals("RestClient")) {
-                                    //injectedClients.add(fieldType);
                                     dependencies.computeIfAbsent(className, k -> new HashSet<>()).add(fieldType);
                                 } else if (annotation.getNameAsString().equals("RedisClient")) {
                                     redisClients.add(fieldType);
@@ -82,12 +89,10 @@ public class ArchitectureDiagramParser implements Parser {
         services.removeAll(redisClients);
 
         return ParsedDto.builder()
-                .artifactId(artifactId)
                 .services(services)
                 .restClients(restClients)
                 .injectedClients(injectedClients)
                 .redisClients(redisClients)
-                .logger(inputDto.getLogger())
                 .dependencies(dependencies)
                 .build();
     }
